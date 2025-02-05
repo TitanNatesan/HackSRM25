@@ -7,7 +7,7 @@ from pathlib import Path
 from PIL import Image
 
 st.title("🦴 Bone Fracture Detection using YOLOv8")
-MODEL_PATH = "yolov8_bone_fracture.pt"
+MODEL_PATH = "yolov11_bone_fracture.pt"
 model = YOLO(MODEL_PATH)
 OUTPUT_DIR = Path("predictions")
 OUTPUT_DIR.mkdir(exist_ok=True)

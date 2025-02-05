@@ -23,7 +23,7 @@ app.add_middleware(
 # ==========================
 # 📌 Load the Trained Model
 # ==========================
-MODEL_PATH = "yolov8_bone_fracture.pt"  # Update this path if needed
+MODEL_PATH = "yolov11_bone_fracture.pt"  # Update this path if needed
 model = YOLO(MODEL_PATH)
 print("✅ Model Loaded Successfully!")
 
