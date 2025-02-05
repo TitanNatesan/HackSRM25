@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>YOLO Inference</title>
+</head>
+
+<body>
+    <h1>Upload an Image for Inference</h1>
+    <form id="uploadForm" method="POST" enctype="multipart/form-data">
+        <input type="file" id="imageFile" name="file" accept="image/*" />
+        <button type="submit">Submit</button>
+    </form>
+
+    <h2>Inference Results</h2>
+    <div id="results" style="display: flex; gap: 10px; margin-top: 20px;">
+        <div>
+            <p>Original Image:</p>
+            <img id="originalImg" alt="Original" style="max-width: 300px;" />
+        </div>
+        <div>
+            <p>Processed Image:</p>
+            <img id="processedImg" alt="Processed" style="max-width: 300px;" />
+        </div>
+        <div>
+            <p>Segmentation Mask:</p>
+            <img id="maskImg" alt="Mask" style="max-width: 300px;" />
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('uploadForm');
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const fileInput = document.getElementById('imageFile');
+            const file = fileInput.files[0];
+            if (!file) {
+                alert("Please select an image first.");
+                return;
+            }
+
+            // Create FormData and append the file
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                // Make the POST request to your FastAPI endpoint
+                const response = await fetch('http://127.0.0.1:8000/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Server responded with ${response.status}`);
+                }
+
+                // Parse the JSON response
+                const data = await response.json();
+
+                // Extract the base64 strings
+                const originalBase64 = data.original_image;
+                const processedBase64 = data.processed_image;
+                const maskBase64 = data.segmentation_mask;
+
+                // Set the images' src attributes to display them
+                document.getElementById('originalImg').src = "data:image/png;base64," + originalBase64;
+                document.getElementById('processedImg').src = "data:image/png;base64," + processedBase64;
+                document.getElementById('maskImg').src = "data:image/png;base64," + maskBase64;
+            } catch (err) {
+                console.error(err);
+                alert("Error during prediction. See console for details.");
+            }
+        });
+    </script>
+</body>
+
+</html>
